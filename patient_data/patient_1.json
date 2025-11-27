@@ -1,0 +1,79 @@
+{
+  "patient_id": "1",
+  "name": "sanket",
+  "age": 25,
+  "condition": "Pelvic Floor Dysfunction",
+  "therapy_start_date": "2025-11-27T22:58:08.425838",
+  "gender": "Male",
+  "referring_physician": "",
+  "insurance_id": "",
+  "clinical_notes": "",
+  "current_pain_level": 5,
+  "target_rom": {},
+  "sessions": [],
+  "pelvic_history": [
+    {
+      "date": "2025-11-27T23:00:23.442976",
+      "left_pelvic_angle": 1.8219608141994748,
+      "right_pelvic_angle": 6.033163439433483,
+      "posture_score": 6.0703452080488205,
+      "analysis_data": {
+        "pelvic_tilt_angle": 1.8219608141994748,
+        "lateral_tilt_angle": 6.033163439433483,
+        "posture_score": 6.0703452080488205,
+        "trunk_alignment": 0.0,
+        "weight_distribution": {
+          "distribution": "Right-shifted",
+          "shift_percentage": 12.878136336803436
+        },
+        "analysis_quality": "poor",
+        "quality_score": 0.0703452080488205,
+        "risk_factors": [
+          "No significant risk factors identified"
+        ],
+        "functional_impact": "Mild functional impact - preventive intervention beneficial",
+        "clinical_recommendations": [
+          "Core stabilization exercises 3x/week",
+          "Postural awareness training",
+          "Activity modification counseling",
+          "Unilateral hip strengthening",
+          "Leg length assessment",
+          "Single-leg balance training"
+        ],
+        "measurement_confidence": 7.03452080488205,
+        "landmark_positions": {
+          "left_hip": [
+            0.7899896502494812,
+            2.337693929672241,
+            -0.27575838565826416
+          ],
+          "right_hip": [
+            0.5183706879615784,
+            2.3089866638183594,
+            0.281380832195282
+          ],
+          "left_shoulder": [
+            0.8649717569351196,
+            1.278599500656128,
+            -0.4845312535762787
+          ],
+          "right_shoulder": [
+            0.37843018770217896,
+            1.3260024785995483,
+            -0.2098475694656372
+          ]
+        },
+        "timestamp": "2025-11-27T23:00:09.416618",
+        "tm_label": "2 Highly Severe tilt",
+        "tm_confidence": 95.6778347492218
+      },
+      "interpretation": "Good pelvic alignment with minor asymmetry",
+      "clinical_significance": "Moderate postural dysfunction - active intervention needed",
+      "recommendations": [
+        "Continue current postural habits",
+        "Maintain regular physical activity",
+        "Monitor posture during prolonged sitting"
+      ]
+    }
+  ]
+}

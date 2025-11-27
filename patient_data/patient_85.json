@@ -1,0 +1,84 @@
+{
+  "patient_id": "85",
+  "name": "sanket",
+  "age": 25,
+  "condition": "Pelvic Floor Dysfunction",
+  "therapy_start_date": "2025-11-27T23:13:05.028629",
+  "gender": "Male",
+  "referring_physician": "",
+  "insurance_id": "",
+  "clinical_notes": "",
+  "current_pain_level": 10,
+  "target_rom": {},
+  "sessions": [],
+  "pelvic_history": [
+    {
+      "date": "2025-11-27T23:14:29.908860",
+      "left_pelvic_angle": -9.07223966544459,
+      "right_pelvic_angle": 8.196437247573176,
+      "posture_score": 6.737825699767456,
+      "analysis_data": {
+        "pelvic_tilt_angle": -9.07223966544459,
+        "lateral_tilt_angle": 8.196437247573176,
+        "posture_score": 6.737825699767456,
+        "trunk_alignment": 8.641334053419461,
+        "weight_distribution": {
+          "distribution": "Right-shifted",
+          "shift_percentage": 2.109234035015106
+        },
+        "analysis_quality": "poor",
+        "quality_score": 0.009558889083564281,
+        "risk_factors": [
+          "Frontal plane asymmetry"
+        ],
+        "functional_impact": "Mild functional impact - preventive intervention beneficial",
+        "clinical_recommendations": [
+          "Core stabilization exercises 3x/week",
+          "Postural awareness training",
+          "Activity modification counseling",
+          "Unilateral hip strengthening",
+          "Leg length assessment",
+          "Single-leg balance training"
+        ],
+        "measurement_confidence": 0.9558889083564281,
+        "landmark_positions": {
+          "left_hip": [
+            0.5789708495140076,
+            0.7345484495162964,
+            0.038235556334257126
+          ],
+          "right_hip": [
+            0.3666350841522217,
+            0.7039638757705688,
+            -0.03875591978430748
+          ],
+          "left_shoulder": [
+            0.738021969795227,
+            0.1937522143125534,
+            -0.34630435705184937
+          ],
+          "right_shoulder": [
+            0.3902738094329834,
+            0.1006399393081665,
+            -0.5093225240707397
+          ]
+        },
+        "timestamp": "2025-11-27T23:14:18.681386",
+        "tm_label": "Highly Severe tilt",
+        "tm_confidence": 99.51530694961548
+      },
+      "interpretation": "Mild pelvic tilt detected - monitor and consider intervention",
+      "clinical_significance": "Moderate postural dysfunction - active intervention needed",
+      "recommendations": [
+        "Implement daily core strengthening exercises",
+        "Practice pelvic tilt corrections 3x daily",
+        "Ergonomic workspace assessment recommended",
+        "Hip flexor stretching routine",
+        "Unilateral strengthening exercises",
+        "Leg length assessment",
+        "Gait analysis consideration",
+        "Single-leg balance training"
+      ]
+    }
+  ]
+}
