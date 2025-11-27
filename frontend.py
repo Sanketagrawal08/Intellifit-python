@@ -46,7 +46,7 @@ def load_tm_model():
         return _tm_model, _tm_labels
 
     except Exception as e:
-        st.error(f"❌ Failed to load Teachable Machine model: {e}")
+        st.error(f"Failed to load Teachable Machine model: {e}")
         return None, None
 
 
