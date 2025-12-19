@@ -1949,7 +1949,7 @@ h1, h2, h3, h4, h5, h6, p, label, span, li, small {
 }
 
 .stButton > button:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
     background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
 }
