@@ -1,3 +1,4 @@
+
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -300,79 +301,6 @@ class AdvancedPelvicAnalyzer:
             'poor': 0.3
         }
 
-    def calculate_pelvic_tilt(self, landmarks):
-        """Comprehensive pelvic tilt analysis with clinical accuracy"""
-        try:
-            # Validate landmark detection quality
-            quality_score = self._assess_landmark_quality(landmarks)
-            
-            # Extract anatomical landmarks
-            left_hip = landmarks[self.landmarks_map['left_hip']]
-            right_hip = landmarks[self.landmarks_map['right_hip']]
-            left_shoulder = landmarks[self.landmarks_map['left_shoulder']]
-            right_shoulder = landmarks[self.landmarks_map['right_shoulder']]
-            
-            # Calculate primary pelvic tilt (sagittal plane)
-            hip_midpoint = self._calculate_midpoint(left_hip, right_hip)
-            shoulder_midpoint = self._calculate_midpoint(left_shoulder, right_shoulder)
-            
-            # Primary pelvic tilt angle calculation
-            dx = hip_midpoint[0] - shoulder_midpoint[0]
-            dy = hip_midpoint[1] - shoulder_midpoint[1]
-            pelvic_angle = np.degrees(np.arctan2(dx, dy))
-            
-            # Lateral pelvic tilt (frontal plane)
-            hip_height_diff = left_hip[1] - right_hip[1]
-            hip_width = abs(left_hip[0] - right_hip[0])
-            lateral_tilt = np.degrees(np.arctan2(hip_height_diff, hip_width))
-            
-            # Advanced postural metrics
-            trunk_alignment = self._calculate_trunk_alignment(landmarks)
-            weight_distribution = self._calculate_weight_distribution(landmarks)
-            
-            # Overall posture score calculation
-            posture_score = self._calculate_comprehensive_posture_score(
-                pelvic_angle, lateral_tilt, trunk_alignment, quality_score
-            )
-            
-            # Clinical assessment
-            risk_factors = self._identify_risk_factors(pelvic_angle, lateral_tilt)
-            functional_impact = self._assess_functional_impact(posture_score)
-            
-            return {
-                'pelvic_tilt_angle': float(pelvic_angle),
-                'lateral_tilt_angle': float(lateral_tilt),
-                'posture_score': float(posture_score),
-                'trunk_alignment': float(trunk_alignment),
-                'weight_distribution': weight_distribution,
-                'analysis_quality': self._get_quality_rating(quality_score),
-                'quality_score': float(quality_score),
-                'risk_factors': risk_factors,
-                'functional_impact': functional_impact,
-                'clinical_recommendations': self._generate_clinical_recommendations(
-                    pelvic_angle, lateral_tilt, posture_score
-                ),
-                'measurement_confidence': min(100, quality_score * 100),
-                'landmark_positions': {
-                    'left_hip': left_hip,
-                    'right_hip': right_hip,
-                    'left_shoulder': left_shoulder,
-                    'right_shoulder': right_shoulder
-                },
-                'timestamp': datetime.datetime.now().isoformat()
-            }
-            
-        except Exception as e:
-            print(f"Pelvic analysis error: {str(e)}")
-            return {
-                'error': f"Analysis failed: {str(e)}",
-                'pelvic_tilt_angle': 0.0,
-                'lateral_tilt_angle': 0.0,
-                'posture_score': 0.0,
-                'analysis_quality': 'poor',
-                'quality_score': 0.0
-            }
-
     def _calculate_midpoint(self, point1, point2):
         """Calculate midpoint between two landmarks"""
         return [
@@ -382,7 +310,7 @@ class AdvancedPelvicAnalyzer:
         ]
 
     def _assess_landmark_quality(self, landmarks):
-        """Assess the quality of landmark detection"""
+        """Assess the quality of landmark detection using MediaPipe visibility"""
         key_landmarks = [
             self.landmarks_map['left_hip'],
             self.landmarks_map['right_hip'],
@@ -393,14 +321,20 @@ class AdvancedPelvicAnalyzer:
         quality_scores = []
         for idx in key_landmarks:
             if idx < len(landmarks):
-                # Assume landmarks have a visibility/confidence score
-                # For MediaPipe, this would be the third value if available
-                visibility = landmarks[idx][2] if len(landmarks[idx]) > 2 else 0.8
+                point = landmarks[idx]
+
+                # If we have [x, y, z, visibility], use index 3
+                if len(point) > 3:
+                    visibility = point[3]
+                else:
+                    # Backward compatibility: if only [x, y, z], fallback to 0.8
+                    visibility = 0.8
+
                 quality_scores.append(min(1.0, max(0.0, visibility)))
             else:
                 quality_scores.append(0.0)
         
-        return np.mean(quality_scores)
+        return float(np.mean(quality_scores))
 
     def _calculate_trunk_alignment(self, landmarks):
         """Calculate trunk alignment score"""
@@ -427,7 +361,7 @@ class AdvancedPelvicAnalyzer:
             # Convert to 0-10 scale (lower difference = better alignment)
             trunk_alignment = max(0, 10 - (alignment_difference / 5))
             
-            return trunk_alignment
+            return float(trunk_alignment)
             
         except Exception:
             return 5.0  # Default neutral score
@@ -450,14 +384,14 @@ class AdvancedPelvicAnalyzer:
             weight_shift = com_x - ankle_midpoint_x
             
             if abs(weight_shift) < 0.02:  # Within 2% of center
-                return {'distribution': 'Balanced', 'shift_percentage': 0}
+                return {'distribution': 'Balanced', 'shift_percentage': 0.0}
             elif weight_shift > 0:
-                return {'distribution': 'Right-shifted', 'shift_percentage': abs(weight_shift) * 100}
+                return {'distribution': 'Right-shifted', 'shift_percentage': float(abs(weight_shift) * 100)}
             else:
-                return {'distribution': 'Left-shifted', 'shift_percentage': abs(weight_shift) * 100}
+                return {'distribution': 'Left-shifted', 'shift_percentage': float(abs(weight_shift) * 100)}
                 
         except Exception:
-            return {'distribution': 'Unable to assess', 'shift_percentage': 0}
+            return {'distribution': 'Unable to assess', 'shift_percentage': 0.0}
 
     def _calculate_comprehensive_posture_score(self, pelvic_angle, lateral_tilt, trunk_alignment, quality_score):
         """Calculate comprehensive posture score with clinical weighting"""
@@ -495,7 +429,7 @@ class AdvancedPelvicAnalyzer:
         base_score -= quality_penalty
         
         # Ensure score is within bounds
-        return max(0.0, min(10.0, base_score))
+        return float(max(0.0, min(10.0, base_score)))
 
     def _get_quality_rating(self, quality_score):
         """Convert quality score to rating"""
@@ -605,6 +539,79 @@ class AdvancedPelvicAnalyzer:
                 analysis_result.get('lateral_tilt_angle', 0),
                 analysis_result.get('posture_score', 0)
             )
+
+    def calculate_pelvic_tilt(self, landmarks):
+        """Comprehensive pelvic tilt analysis with clinical accuracy"""
+        try:
+            # Validate landmark detection quality
+            quality_score = self._assess_landmark_quality(landmarks)
+            
+            # Extract anatomical landmarks
+            left_hip = landmarks[self.landmarks_map['left_hip']]
+            right_hip = landmarks[self.landmarks_map['right_hip']]
+            left_shoulder = landmarks[self.landmarks_map['left_shoulder']]
+            right_shoulder = landmarks[self.landmarks_map['right_shoulder']]
+            
+            # Calculate primary pelvic tilt (sagittal plane)
+            hip_midpoint = self._calculate_midpoint(left_hip, right_hip)
+            shoulder_midpoint = self._calculate_midpoint(left_shoulder, right_shoulder)
+            
+            # Primary pelvic tilt angle calculation
+            dx = hip_midpoint[0] - shoulder_midpoint[0]
+            dy = hip_midpoint[1] - shoulder_midpoint[1]
+            pelvic_angle = np.degrees(np.arctan2(dx, dy))
+            
+            # Lateral pelvic tilt (frontal plane)
+            hip_height_diff = left_hip[1] - right_hip[1]
+            hip_width = abs(left_hip[0] - right_hip[0])
+            lateral_tilt = np.degrees(np.arctan2(hip_height_diff, hip_width))
+            
+            # Advanced postural metrics
+            trunk_alignment = self._calculate_trunk_alignment(landmarks)
+            weight_distribution = self._calculate_weight_distribution(landmarks)
+            
+            # Overall posture score calculation
+            posture_score = self._calculate_comprehensive_posture_score(
+                pelvic_angle, lateral_tilt, trunk_alignment, quality_score
+            )
+            
+            # Clinical assessment
+            risk_factors = self._identify_risk_factors(pelvic_angle, lateral_tilt)
+            functional_impact = self._assess_functional_impact(posture_score)
+            
+            return {
+                'pelvic_tilt_angle': float(pelvic_angle),
+                'lateral_tilt_angle': float(lateral_tilt),
+                'posture_score': float(posture_score),
+                'trunk_alignment': float(trunk_alignment),
+                'weight_distribution': weight_distribution,
+                'analysis_quality': self._get_quality_rating(quality_score),
+                'quality_score': float(quality_score),
+                'risk_factors': risk_factors,
+                'functional_impact': functional_impact,
+                'clinical_recommendations': self._generate_clinical_recommendations(
+                    pelvic_angle, lateral_tilt, posture_score
+                ),
+                'measurement_confidence': min(100.0, quality_score * 100.0),
+                'landmark_positions': {
+                    'left_hip': left_hip,
+                    'right_hip': right_hip,
+                    'left_shoulder': left_shoulder,
+                    'right_shoulder': right_shoulder
+                },
+                'timestamp': datetime.datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            print(f"Pelvic analysis error: {str(e)}")
+            return {
+                'error': f"Analysis failed: {str(e)}",
+                'pelvic_tilt_angle': 0.0,
+                'lateral_tilt_angle': 0.0,
+                'posture_score': 0.0,
+                'analysis_quality': 'poor',
+                'quality_score': 0.0
+            }
 
 # 📄 PROFESSIONAL REPORT GENERATOR
 class ProfessionalReportGenerator:
@@ -832,53 +839,55 @@ def get_exercise_landmarks_both(exercise_name):
     
     return landmark_configs.get(exercise_name, landmark_configs['Shoulder Rehabilitation'])
 
+def patient_to_dict(patient):
+    """Convert patient object to a JSON-serializable dictionary (same as saved file)."""
+    patient_dict = {
+        'patient_id': patient.patient_id,
+        'name': patient.name,
+        'age': patient.age,
+        'condition': patient.condition,
+        'therapy_start_date': patient.therapy_start_date.isoformat(),
+        'gender': getattr(patient, 'gender', 'Not specified'),
+        'referring_physician': getattr(patient, 'referring_physician', 'Not specified'),
+        'insurance_id': getattr(patient, 'insurance_id', 'Not specified'),
+        'clinical_notes': getattr(patient, 'clinical_notes', ''),
+        'current_pain_level': patient.current_pain_level,
+        'target_rom': patient.target_rom,
+        'sessions': [],
+        'pelvic_history': []
+    }
+
+    # Convert sessions
+    for session in patient.sessions:
+        session_dict = session.copy()
+        if 'date' in session_dict:
+            session_dict['date'] = session_dict['date'].isoformat()
+        patient_dict['sessions'].append(session_dict)
+
+    # Convert pelvic history
+    for entry in patient.pelvic_history:
+        entry_dict = entry.copy()
+        if 'date' in entry_dict:
+            entry_dict['date'] = entry_dict['date'].isoformat()
+        patient_dict['pelvic_history'].append(entry_dict)
+
+    return patient_dict
+
 # 💾 DATA MANAGEMENT FUNCTIONS
 def save_patient_data(patient):
     """Save patient data with enhanced error handling"""
     try:
-        # Create patients directory if it doesn't exist
         os.makedirs('patient_data', exist_ok=True)
-        
         filename = f"patient_data/patient_{patient.patient_id}.json"
-        
-        # Convert patient object to serializable dictionary
-        patient_dict = {
-            'patient_id': patient.patient_id,
-            'name': patient.name,
-            'age': patient.age,
-            'condition': patient.condition,
-            'therapy_start_date': patient.therapy_start_date.isoformat(),
-            'gender': getattr(patient, 'gender', 'Not specified'),
-            'referring_physician': getattr(patient, 'referring_physician', 'Not specified'),
-            'insurance_id': getattr(patient, 'insurance_id', 'Not specified'),
-            'clinical_notes': getattr(patient, 'clinical_notes', ''),
-            'current_pain_level': patient.current_pain_level,
-            'target_rom': patient.target_rom,
-            'sessions': [],
-            'pelvic_history': []
-        }
-        
-        # Convert sessions
-        for session in patient.sessions:
-            session_dict = session.copy()
-            if 'date' in session_dict:
-                session_dict['date'] = session_dict['date'].isoformat()
-            patient_dict['sessions'].append(session_dict)
-        
-        # Convert pelvic history
-        for entry in patient.pelvic_history:
-            entry_dict = entry.copy()
-            if 'date' in entry_dict:
-                entry_dict['date'] = entry_dict['date'].isoformat()
-            patient_dict['pelvic_history'].append(entry_dict)
-        
-        # Save to file
+
+        patient_dict = patient_to_dict(patient)
+
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(patient_dict, f, indent=2, ensure_ascii=False)
-        
+
         print(f"✅ Patient data saved: {filename}")
         return True
-        
+
     except Exception as e:
         print(f"❌ Error saving patient data: {str(e)}")
         return False
@@ -1009,7 +1018,9 @@ def assess_medical_progress(patient, exercise_type, current_angle, pain_level):
         'sessions_completed': len(patient.sessions),
         'compliance_indicators': {
             'session_frequency': len(patient.sessions) / max(1, therapy_days / 7),
-            'pain_trend': 'stable' if len(patient.sessions) < 2 else ('improving' if patient.sessions[-1]['pain_level'] < patient.sessions[0]['pain_level'] else 'stable'),
+            'pain_trend': 'stable' if len(patient.sessions) < 2 else (
+                'improving' if patient.sessions[-1]['pain_level'] < patient.sessions[0]['pain_level'] else 'stable'
+            ),
             'rom_trend': 'improving' if current_angle > baseline_angle else 'stable'
         }
     })
